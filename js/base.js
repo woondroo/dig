@@ -54,7 +54,7 @@ var actions = {
 
 		$.ajax({
 			type	: "GET",
-			url		: tourl,
+			url		: tourl+"?rand="+Math.random(),
 			data 	: senddata,
 			success : function( r ){
 				if ( isouter === 1 )

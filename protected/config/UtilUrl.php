@@ -22,7 +22,9 @@ class UtilUrl
 						'hasnew'=>'upgrade/hasnew',
 						'upgradeversion'=>'upgrade/upgradeversion',
 						// port check
-						'portcheck'=>'port/check'
+						'portcheck'=>'port/check',
+						'printsome'=>'port/print',
+						'generatekey'=>'port/generatekey'
 					);
 
 	/**
@@ -35,3 +37,4 @@ class UtilUrl
 
 //end class
 }
+

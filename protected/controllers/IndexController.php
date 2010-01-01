@@ -250,7 +250,7 @@ class IndexController extends BaseController
 
 		$redis = $this->getRedis();
 		$usbVal = $redis->readByKey( 'usb.status' );
-	
+
 		if ( !empty( $usbVal ) )
 			$usbData = json_decode( $usbVal , true );
 		else
@@ -315,7 +315,7 @@ class IndexController extends BaseController
 		// check data
 		$aryData = $this->actionCheck( true );
 		
-		if ( count( $aryData['alived'] ) === 0 )
+		if ( count( $aryData['alived'] ) === 0 && count( $aryData['died'] ) > 0 )
 			echo $this->actionRestart( true ) === true ? 1 : -1;
 		else
 			echo 0;

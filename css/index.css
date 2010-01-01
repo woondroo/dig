@@ -35,3 +35,9 @@ body{
 .footer p{
 	margin-bottom:0;
 }
+
+.input-area input {
+	height: 42px;
+	font-size: 14px;
+	margin: 10px 0;
+}

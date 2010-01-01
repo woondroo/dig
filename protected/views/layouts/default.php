@@ -20,6 +20,10 @@
 	var NBT_DEBUG = <?php echo NBT_DEBUG ? 1 : 0;?>;
 	var WEB_PATH = "<?php echo $this->baseUrl;?>";
 </script>
+<!--[if lt IE 9]>
+<script language="javascript" type="text/javascript" src="<?php echo $this->baseUrl;?>/js/html5shiv.min.js"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $this->baseUrl;?>/js/respond.min.js"></script>
+<![endif]-->
 </head>
 
 <body>

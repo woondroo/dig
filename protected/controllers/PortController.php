@@ -7,8 +7,6 @@
  */
 class PortController extends BaseController
 {
-	private $_redis;
-
 	/**
 	 * init
 	 */
@@ -30,6 +28,7 @@ class PortController extends BaseController
 	 */
 	public function actionCheck()
 	{
+		$this->layout = "blank";
 		// get target check address
 		$strTarAdd = isset( $_REQUEST['tar'] ) ? htmlspecialchars( $_REQUEST['tar'] ) : '';
 
@@ -49,7 +48,8 @@ class PortController extends BaseController
 			}
 			else
 			{
-				$data = '200';
+				$data['ip'] = $strLocalAdd;
+				$data['key'] = KEY;
 				$msg = '我就是矿机！';
 			}
 			$isok = 1;
@@ -63,20 +63,25 @@ class PortController extends BaseController
 			$msg = NBT_DEBUG ? $e->getMessage() : '系统错误';
 		}
 
-		header('Content-Type: text/html; charset=utf-8');
-		echo $this->encodeAjaxData( $isok , $data , $msg );
-		exit();
+		$data = $this->encodeAjaxData( $isok , $data , $msg );
+		$this->render( 'index' , array('data'=>$data) );
 	}
 
 	/**
-	 * get redis connection
+	 * Generate key for machine
 	 */
-	public function getRedis()
+	public function actionGeneratekey()
 	{
-		if ( empty( $this->_redis ) )
-			$this->_redis = new CRedis();
+		$os = DIRECTORY_SEPARATOR=='\\' ? "windows" : "linux";
+		$mac_addr = new CMac( $os );
+		$ip_addr = new CIp( $os );
 
-		return $this->_redis;
+		$file = fopen( WEB_ROOT.'/js/showport.js' , 'w' );
+		fwrite($file, 'add_machine(\''.md5($mac_addr->mac_addr).'\',\''.$ip_addr->ip_addr.'\');');
+		fclose($file);
+
+		echo '200';
+		exit();
 	}
 
 //end class
