@@ -14,7 +14,11 @@ class UtilUrl
 						'usbset'=>'index/usbset',
 						// usb=/dev/ttyUSB0
 						'restartTar'=>'index/restartTarget',
-						'monitor'=>'monitor/index'
+						'monitor'=>'monitor/index',
+						// upgrade
+						'upgrade'=>'upgrade/index',
+						'checkversion'=>'upgrade/checkversion',
+						'upgradeversion'=>'upgrade/upgradeversion'
 					);
 
 	/**

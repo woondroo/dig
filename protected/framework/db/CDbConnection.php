@@ -1,37 +1,10 @@
 <?php
 class CDbConnection
 {
-	private static $_dbConnectionFTP = null;
 	private static $_dbConnectionWeb = null;
-	private static $_dbConnectionOrder = null;
-	private static $_dbConnectionAccount = null;
 	private static $_dbTransaction = array(
-				'ftp'=>'getFTPDbConnection',
-				'web'=>'getWebDbConnection',
-				'order'=>'getOrderDbConnection',
-				'account'=>'getAccountDbConnection',
-				'comment'=>'getCommentDbConnection'
+				'web'=>'getWebDbConnection'
 			);
-
-	/**
-	 * 获得FTP管理DB connection()
-	 * @return CPdo 
-	 */
-	public static function getFTPDbConnection()
-	{
-		if( self::$_dbConnectionFTP === null )
-		{
-			$db = new CPdo(); 
-			$db->setDsn( DB_FTP_DSN );
-			$db->setUserName( DB_FTP_USERNAME );
-			$db->setPassword( DB_FTP_PASSWORD );
-			$db->setChargset( DB_FTP_CHARGSET );
-			$db->connect();
-			
-			self::$_dbConnectionFTP = $db;
-		}
-		return self::$_dbConnectionFTP;
-	}
 
 	/**
 	 * 获取Web Db connection
@@ -51,66 +24,6 @@ class CDbConnection
 			self::$_dbConnectionWeb = $db;
 		}
 		return self::$_dbConnectionWeb;
-	}
-	
-	/**
-	 * 获取订单DB connection()
-	 * @return CPdo 
-	 */
-	public static function getOrderDbConnection()
-	{
-		if( self::$_dbConnectionOrder === null )
-		{
-			$db = new CPdo(); 
-			$db->setDsn( DB_ORDER_DSN );
-			$db->setUserName( DB_ORDER_USERNAME );
-			$db->setPassword( DB_ORDER_PASSWORD );
-			$db->setChargset( DB_ORDER_CHARGSET );
-			$db->connect();
-			
-			self::$_dbConnectionOrder = $db;
-		}
-		return self::$_dbConnectionOrder;
-	}
-	
-	/**
-	 * 获得用户帐号信息数据库DB connection()
-	 * @return CPdo 
-	 */
-	public static function getAccountDbConnection()
-	{
-		if( self::$_dbConnectionAccount === null )
-		{
-			$db = new CPdo(); 
-			$db->setDsn( DB_ACCOUNT_DSN );
-			$db->setUserName( DB_ACCOUNT_USERNAME );
-			$db->setPassword( DB_ACCOUNT_PASSWORD );
-			$db->setChargset( DB_ACCOUNT_CHARGSET );
-			$db->connect();
-			
-			self::$_dbConnectionAccount = $db;
-		}
-		return self::$_dbConnectionAccount;
-	}
-
-	/**
-	 * 获得评论数据库DB connection()
-	 * @return CPdo
-	 */
-	public static function getCommentDbConnection()
-	{
-		if( self::$_dbConnectionAccount === null )
-		{
-			$db = new CPdo(); 
-			$db->setDsn( DB_COMMENT_DSN );
-			$db->setUserName( DB_COMMENT_USERNAME );
-			$db->setPassword( DB_COMMENT_PASSWORD );
-			$db->setChargset( DB_COMMENT_CHARGSET );
-			$db->connect();
-			
-			self::$_dbConnectionAccount = $db;
-		}
-		return self::$_dbConnectionAccount;
 	}
 
 	/**

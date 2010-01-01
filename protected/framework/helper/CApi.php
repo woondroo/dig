@@ -9,13 +9,15 @@ class CApi
 	 * 调用接口处理数据
 	 *
 	 * @param string $_strRoute	路由
-	 * @param array		$_aryData 传递的参数
+	 * @param array $_aryData 传递的参数
+	 * @param string $_strSignKey 加密串
+	 * @param boolean $_boolIsStaticUrl 是否是静态地址，如果是静态地址，则参数以 ？ 开始
 	 * @return array
 	 * 			<pre>
 	 * 					return array( 'ISOK'=>bool,'DATA'=>array(),'ERROR'=>'错误号' );
 	 * 			</pre>
 	 */
-	public static function callApi( $_strRoute = "" , $_aryData = array() , $_strSignKey = "" )
+	public static function callApi( $_strRoute = "" , $_aryData = array() , $_strSignKey = "" , $_boolIsStaticUrl = false )
 	{
 		$aryReturn = array( 'ISOK'=>0 , 'DATA'=>array() , 'ERROR'=>'' );
 		//补时间戳数据
@@ -24,9 +26,14 @@ class CApi
 		//对参数进行签名
 		$sign = self::sign( $_aryData , $_strSignKey );
 		$url = $_strRoute;
+
+		$aryParams = array();
 		foreach ( $_aryData as $k=>$v )
-			$url .= "&{$k}=".urlencode($v);
-		$url .= "&sign={$sign}";
+			$aryParams[] = "{$k}=".urlencode($v);
+
+		$aryParams[] = "&sign={$sign}";
+		$url = ( $_boolIsStaticUrl === true ? '?' : '&' ).implode( "&" , $aryParams );
+
 		// 初始化一个 cURL 对象
 		$curl = curl_init();
 		// 设置你需要抓取的URL
@@ -79,9 +86,9 @@ class CApi
 		$sign = "";
 		//把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
 		while (list ($key, $val) = each ($_aryData)) {
-	        $sign.=$key."=".$val."&";
+	        $sign .= $key."=".$val."&";
 	    }
-	    $sign = substr($arg,0,count($arg)-2);//去掉最后一个&字符
+	    $sign = substr($sign , 0 , count($sign)-2 );//去掉最后一个&字符
 	    //拼接后的字符串再与安全校验码直接连接起来
 	    $sign .= $_strSignKey;
 	    //将字符串签名，获得签名结果
