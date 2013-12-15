@@ -32,7 +32,7 @@ class CRedisList extends CRedis
 	/**
 	 * 初始化
 	 */
-	public function init( $_prefix = 'qinxue.list.' , $_suffix = '' )
+	public function init( $_prefix = 'redis.list.' , $_suffix = '' )
 	{
 		parent::init( $_prefix , $_suffix );
 	}

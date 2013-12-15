@@ -2,9 +2,7 @@
 /**
  * Base Controller
  * 
- * 
- * @author samson.zhou
- * @date 2013-08-28
+ * @author wengebin
  */
 class BaseController extends CController
 {

@@ -8,7 +8,7 @@ class CWidgetCaptchaRenderImage
 	/**
 	 * Prefix to the session variable name used by the action.
 	 */
-	const SESSION_VAR_PREFIX='qinxue.';
+	const SESSION_VAR_PREFIX='www.';
 	/**
 	 * @var integer how many times should the same CAPTCHA be displayed. Defaults to 3.
 	 * A value less than or equal to 0 means the test is unlimited (available since version 1.1.2).

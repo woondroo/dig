@@ -139,46 +139,6 @@ class CWebUser extends CApplicationComponents
 	}
 	
 	/**
-	 * 设置教师ID
-	 *
-	 * @param int $_intId
-	 */
-	public function setTeacherId( $_intId = null )
-	{
-		$_SESSION['__tid'] = $_intId;
-	}
-	
-	/**
-	 * 获取用户ID
-	 *
-	 * @return int
-	 */
-	public function getTeacherId()
-	{
-		return $_SESSION['__tid'];
-	}
-	
-	/**
-	 * 设置教师ID
-	 *
-	 * @param int $_intId
-	 */
-	public function setTeacherName( $_strUname = null )
-	{
-		$_SESSION['__tname'] = $_strUname;
-	}
-	
-	/**
-	 * 获取用户ID
-	 *
-	 * @return int
-	 */
-	public function getTeacherName()
-	{
-		return $_SESSION['__tname'];
-	}
-	
-	/**
 	 * 设置管理员ID
 	 *
 	 * @param int $_intId

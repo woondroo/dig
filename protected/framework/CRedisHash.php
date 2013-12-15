@@ -13,7 +13,7 @@ class CRedisHash extends CRedis
 	/**
 	 * 初始化
 	 */
-	public function init( $_prefix = 'qinxue.hash.' , $_suffix = '' )
+	public function init( $_prefix = 'redis.hash.' , $_suffix = '' )
 	{
 		parent::init( $_prefix , $_suffix );
 	}

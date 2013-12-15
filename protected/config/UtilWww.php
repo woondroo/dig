@@ -1,7 +1,7 @@
 <?php
 class UtilWww
 {
-	const PLAY_KEY = "qinxue";
+	const PLAY_KEY = "www";
 	const VIDEO_ACCESS_KEY = "password";
 	
 	/**

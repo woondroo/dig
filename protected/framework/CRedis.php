@@ -17,7 +17,7 @@ class CRedis extends CApplicationComponents
 	 * Redis key 前缀
 	 * @var string
 	 */
-	private $_keyPrefix = "qinxue.string.";
+	private $_keyPrefix = "redis.string.";
 
 	/**
 	 * Redis key 后缀

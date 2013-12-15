@@ -13,27 +13,8 @@ class CString
 	/**
 	 * 密码加密
 	 *
-	 * 
-	 */
-	public static function encodeAdminPassword( $_strPwd = '' )
-	{
-		return md5( "qinxue-admin-".$_strPwd );
-	}
-	
-	/**
-	 * 密码加密
-	 *
-	 * 
-	 */
-	public static function encodeTeacherPassword( $_strPwd = '' )
-	{
-		return md5( "teacher-admin-".$_strPwd );
-	}
-	
-	/**
-	 * 密码加密
-	 *
-	 * 
+	 * @param string $_strPwd 用户密码
+	 * @return string
 	 */
 	public static function encodeMemberPassword( $_strPwd = '' )
 	{
