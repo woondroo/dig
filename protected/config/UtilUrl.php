@@ -4,7 +4,16 @@ class UtilUrl
 	// 配置
 	private static $_aryConfigRouteReWrite = array(
 						''=>'index/index',
-						'logout'=>'login/logout'
+						// s=1|0
+						'supermode'=>'index/mode',
+						'restart'=>'index/restart',
+						'shutdown'=>'index/shutdown',
+						'check'=>'index/check',
+						'usbstate'=>'index/usbstate',
+						// usb=/dev/ttyUSB0 | to=btc|ltc|0
+						'usbset'=>'index/usbset',
+						// usb=/dev/ttyUSB0
+						'restartTar'=>'index/restartTarget'
 					);
 
 	/**

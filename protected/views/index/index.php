@@ -10,7 +10,14 @@ $aryStatus = array( 'success'=>'alert-success' , 'warning'=>'alert-warning' , 'e
   </div>
   <div class="jumbotron">
     <form class="form-signin" role="form" method="POST" action="<?php echo $this->createUrl( 'index/index' ); ?>">
-      <?php if ( !empty( $tip['status'] ) ) : ?><div id="action-tip" class="alert <?php echo $aryStatus[$tip['status']]; ?> important-tip"><?php echo $tip['text']; ?></div><?php endif; ?>
+      <?php if ( !empty( $tip['status'] ) ) : ?>
+      <div id="action-tip" class="alert <?php echo $aryStatus[$tip['status']]; ?> important-tip"><?php echo $tip['text']; ?></div>
+      <script type="text/javascript">
+      	setTimeout(function(){
+		$('#action-tip').hide();
+	}, 5000);
+      </script>
+      <?php endif; ?>
       <div class="input-area">
 	<div>BTC设置 (不填写则不启动)</div>
         <input class="form-control" placeholder="BTC矿池地址" name="address_btc" value="<?php echo $btc['ad']; ?>" type="text" <?php echo empty($btc['ad']) ? 'autofocus' : ''; ?>/>
@@ -28,8 +35,9 @@ $aryStatus = array( 'success'=>'alert-success' , 'warning'=>'alert-warning' , 'e
       <p>&nbsp;</p>
       <p>&nbsp;</p>
       <p>
-	<div class="alert alert-info important-tip"><strong>重要操作!</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;保存后请重启程序!</div>
-	<button class="btn btn-lg btn-danger btn-block" onclick="restart()" type="button" >重启程序</button>
+	<div id="action-restart-tip" class="alert alert-info important-tip"><strong>重要操作!</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;保存后请重启程序!</div>
+	<button class="btn btn-lg btn-danger btn-block" onclick="actions.restart_home()" type="button" >重启程序</button>
       </p>
     </form>
   </div>
+

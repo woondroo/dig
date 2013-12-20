@@ -7,6 +7,8 @@
  */
 class IndexController extends BaseController
 {
+	private $_redis;
+
 	/**
 	 * init
 	 */
@@ -22,10 +24,10 @@ class IndexController extends BaseController
 	{
 		try
 		{
-			$this->replaceSeoTitle( 'BTC & LTC æŒ–çŸ¿è®¾ç½®' );
+			$this->replaceSeoTitle( 'BTC & LTC ÍÚ¿óÉèÖÃ' );
 
 			// open redis
-			$redis = new CRedis();
+			$redis = $this->getRedis();
 
 			// Tip data
 			$aryTipData = array();
@@ -64,11 +66,11 @@ class IndexController extends BaseController
 				$redis->saveData();
 				
 				$aryTipData['status'] = 'success';
-				$aryTipData['text'] = 'ä¿å­˜æˆåŠŸ!';
+				$aryTipData['text'] = '±£´æ³É¹¦!';
 			}
 		} catch ( Exception $e ) {
 			$aryTipData['status'] = 'error';
-			$aryTipData['text'] = 'ä¿å­˜å¤±è´¥!';
+			$aryTipData['text'] = '±£´æÊ§°Ü!';
 		}
 
 		$aryData = array();
@@ -86,7 +88,7 @@ class IndexController extends BaseController
 		// is super mode
 		$intIsSuper = isset( $_GET['s'] ) ? intval( $_GET['s'] ) : 0;
 
-		$redis = new CRedis();
+		$redis = $this->getRedis();
 		$btcVal = $redis->readByKey( 'btc.setting' );
 		$ltcVal = $redis->readByKey( 'ltc.setting' );
 		$aryBTCData = empty( $btcVal ) ? array() : json_decode( $btcVal , true );
@@ -106,65 +108,134 @@ class IndexController extends BaseController
 		// store data
 		$redis->writeByKey( 'btc.setting' , json_encode( $aryBTCData ) );
 		$redis->writeByKey( 'ltc.setting' , json_encode( $aryLTCData ) );
-		$redis->saveData();
 
-		$this->actionRestartProgram();
-
+		$this->actionRestart( true );
 		echo '200';exit;
 	}
 
 	/**
 	 * restart program
 	 */
-	public function actionRestart()
+	public function actionRestart( $_boolIsNoExist = false )
 	{
+		$this->actionShutdown( true );
+
 		ini_set('max_execution_time', '0');
 
-		$redis = new CRedis();
-		$btcVal = $redis->readByKey( 'btc.setting' );
-		$ltcVal = $redis->readByKey( 'ltc.setting' );
-		$aryBTCData = empty( $btcVal ) ? array() : json_decode( $btcVal , true );
-		$aryLTCData = empty( $ltcVal ) ? array() : json_decode( $ltcVal , true );
-
-		$startTarget = isset( $_GET['tar'] ) ? htmlspecialchars( $_GET['tar'] ) : '';
-		if ( empty( $startTarget ) )
+		$redis = $this->getRedis();
+		$usbVal = $redis->readByKey( 'usb.status' );
+		if ( empty( $usbVal ) )
 		{
-			echo '500';exit;
+			if ( $_boolIsNoExist === false )
+			{
+				echo '500';exit;
+			}
+			else return false;
 		}
 
-		if ( !empty( $aryBTCData ) ) $commandBTC = "sudo nohup /usr/soft/cgminer-3.1.1-GC3355-SV-master/cgminer-3.1.1/cgminer -o {$aryBTCData['ad']} -u {$aryBTCData['ac']} -p {$aryBTCData['pw']} -S /dev/ttyUSB0 &";
-
-		if ( !empty( $aryLTCData ) ) $commandLTC = "sudo nohup /usr/soft/cpuminer-master/minerd --freq=".($aryLTCData['su'] == 0 ? '600' : '800')." --gc3355=/dev/ttyUSB1 --url={$aryLTCData['ad']} --userpass={$aryLTCData['ac']}:{$aryLTCData['pw']} -2 &";
+		$usbData = json_decode( $usbVal , true );
+		if ( empty( $usbData ) )
+		{
+			if ( $_boolIsNoExist === false )
+			{
+				echo '200';exit;
+			}
+			else return true;
+		}
 		
-		if ( $startTarget == 'btc' )
-			exec( $commandBTC );
-		else if ( $startTarget == 'ltc' )
-			exec( $commandLTC );
-/*
-		$btcShellFile = SHELL_DIR."btc.h";
-		$saveResult = CUtilConsole::genShShellFile( $btcShellFile , $commandBTC );
+		$aryBTCUsb = array();
+		$aryLTCUsb = array();
+		foreach ( $usbData as $usb=>$model )
+		{
+			if ( in_array( $model , array( 'btc' , 'ltc' ) ) )
+			{
+				if ( $model == 'btc' )
+					$aryBTCUsb[$usb] = $model;
+				else if ( $model == 'ltc' )
+					$aryLTCUsb[$usb] = $model;
+			}
+		}
 
-		CUtilConsole::execShShellFile( $btcShellFile );
-		echo 'end!';
-*/
+		foreach ( $aryBTCUsb as $usb=>$model )
+		{
+			$this->restartByUsb( $usb , $model );
+		}
+
+		sleep( 3 );
+
+		foreach ( $aryLTCUsb as $usb=>$model )
+		{
+			$this->restartByUsb( $usb , $model );
+		}
+
+		if ( $_boolIsNoExist === false )
+		{
+			echo '200';exit;
+		}
+		else return true;
+	}
+
+	/**
+	 * restart program by usb
+	 */
+	public function restartByUsb( $_strUsb = '' , $_strUsbModel = '' , $_strSingleShutDown = '' )
+	{
+		if ( !empty( $_strSingleShutDown ) )
+			$this->actionShutdown( true , $_strSingleShutDown );
+
+		if ( empty( $_strUsb ) || empty( $_strUsbModel ) )
+			return false;
+
+		$startUsb = $_strUsb;
+		$startModel = $_strUsbModel;
+	
+		$redis = $this->getRedis();
+		$setVal = $redis->readByKey( "{$startModel}.setting" );
+		$aryData = empty( $setVal ) ? array() : json_decode( $setVal , true );
+		if ( empty( $aryData ) )
+			return false;
+
+		if ( $startModel == 'btc' )
+			$command = "sudo nohup /home/soft/cgminer/cgminer -o {$aryData['ad']} -u {$aryData['ac']} -p {$aryData['pw']} -S {$startUsb} >/dev/null 2>&1 &";
+		else if ( $startModel == 'ltc' )
+			$command = "sudo nohup /home/soft/cpuminer/minerd --freq=".($aryData['su'] == 0 ? '600' : '800')." --gc3355={$startUsb} --url={$aryData['ad']} --userpass={$aryData['ac']}:{$aryData['pw']} -2 >/dev/null 2>&1 &";
+
+		exec( $command );
+		return true;
 	}
 
 	/**
 	 * shutdown program
 	 */
-	public function actionShutdown()
+	public function actionShutdown( $_boolIsNoExist = false , $_strSingleShutDown = '' )
 	{
 		exec( 'sudo ps x|grep miner' , $output );
 
 		$pids = array();
+		$inglePids = array();
 		foreach ( $output as $r )
 		{
 			preg_match( '/\s*(\d+)\s*.*/' , $r , $match );
 			if ( !empty( $match[1] ) ) $pids[] = $match[1];
+			
+			if ( !empty( $_strSingleShutDown ) )
+			{
+				preg_match( '/.*-S\s(.+).*/' , $r , $match_usb_btc );
+				preg_match( '/.*--gc3355=(.+)\s--url=.*/' , $r , $match_usb_ltc );
+				if ( in_array( $_strSingleShutDown , array( $match_usb_btc[1] , $match_usb_ltc[1] ) ) ) $inglePids[] = $match[1];
+			}
 		}
 
-		exec( 'sudo kill -9 '.implode( ' ' , $pids ) );
-		echo '200';exit;
+		if ( !empty( $_strSingleShutDown ) )
+			exec( 'sudo kill -9 '.implode( ' ' , $inglePids ) );
+		else if ( !empty( $pids ) )
+			exec( 'sudo kill -9 '.implode( ' ' , $pids ) );
+		
+		if ( $_boolIsNoExist === false )
+		{
+			echo '200';exit;
+		}
+		else return true;
 	}
 
 	/**
@@ -174,32 +245,189 @@ class IndexController extends BaseController
 	{
 		exec( 'sudo ps x|grep miner' , $output );
 
-		$alived = array(
-				'ltc'=>array(),
-				'btc'=>array()
-			);
+		$alived = array();
+		$died = array();
+
+		$redis = $this->getRedis();
+		$usbVal = $redis->readByKey( 'usb.status' );
+	
+		if ( !empty( $usbVal ) )
+			$usbData = json_decode( $usbVal , true );
+		else
+			$usbData = array();
+
 		foreach ( $output as $r )
 		{
-			preg_match( '/.*-u\s(.+)\s-p.*/' , $r , $match_user_btc );
-			preg_match( '/.*--userpass=(.*)\:.*/' , $r , $match_user_ltc );
+			//preg_match( '/.*-u\s(.+)\s-p.*/' , $r , $match_user_btc );
+			//preg_match( '/.*--userpass=(.*)\:.*/' , $r , $match_user_ltc );
 
 			preg_match( '/.*(cgminer).*/' , $r , $match_btc );
 			preg_match( '/.*(minerd).*/' , $r , $match_ltc );
 
-			preg_match( '/.*-o\s(.+)\s-u.*/' , $r , $match_url_btc );
-			preg_match( '/.*--url=(.*)\s--userpass.*/' , $r , $match_url_ltc );
+			//preg_match( '/.*-o\s(.+)\s-u.*/' , $r , $match_url_btc );
+			//preg_match( '/.*--url=(.*)\s--userpass.*/' , $r , $match_url_ltc );
 
-			if ( !empty( $match_btc[1] ) 
-					&& ( !is_array( $alived['btc'][$match_url_btc[1]] ) || !in_array( $match_user_btc[1] , $alived['btc'][$match_url_btc[1]] ) ) )
-				$alived['btc'][$match_url_btc[1]][] = $match_user_btc[1];
+			preg_match( '/.*-S\s(.+).*/' , $r , $match_usb_btc );
+			preg_match( '/.*--gc3355=(.+)\s--url=.*/' , $r , $match_usb_ltc );
 
-			if ( !empty( $match_ltc[1] ) 
-					&& ( !is_array( $alived['ltc'][$match_url_ltc[1]] ) || !in_array( $match_user_ltc[1] , $alived['ltc'][$match_url_ltc[1]] ) ) )
-				$alived['ltc'][$match_url_btc[1]][] = $match_user_ltc[1];
+			if ( !array_key_exists( $match_usb_btc[1] , $usbData ) && !array_key_exists( $match_usb_ltc[1] , $usbData ) )
+			{
+				$match_usb = !empty( $match_usb_btc[1] ) ? $match_usb_btc[1] : $match_usb_ltc[1];
+				$this->actionShutdown( true , $match_usb );
+				continue;
+			}
+
+			if ( !empty( $match_btc[1] ) && !array_key_exists( $match_usb_btc[1] , $alived ) )
+				$alived[$match_usb_btc[1]] = 'btc';
+
+			if ( !empty( $match_ltc[1] ) && !array_key_exists( $match_usb_ltc[1] , $alived ) )
+				$alived[$match_usb_ltc[1]] = 'ltc';
 		}
 
-		echo json_encode( $alived );exit;
+		ksort( $alived );
+
+		foreach ( $usbData as $usb=>$model )
+		{
+			if ( !array_key_exists( $usb , $alived ) )
+				$died[$usb] = $model;
+		}
+
+		ksort( $died );
+
+		$aryData = array();
+		$aryData['alived'] = $alived;
+		$aryData['died'] = $died;
+		$aryData['super'] = $this->getSuperModelState();
+		echo json_encode( $aryData );exit;
 	}
 
-//end class	
+	/**
+	 * check usb state
+	 */
+	public function actionUsbstate()
+	{
+		$redis = $this->getRedis();
+		$usbVal = $redis->readByKey( 'usb.status' );
+
+		$usbData = array();
+		if ( !empty( $usbVal ) )
+			$usbData = json_decode( $usbVal , true );
+
+		exec( 'sudo ls /dev/*USB*' , $output );
+
+		$waitSetUsb = array();
+		foreach ( $usbData as $uk=>$u )
+		{
+			if ( !in_array( $uk , $output ) )
+				unset( $usbData[$uk] );
+			else if ( $u == -1 )
+				$waitSetUsb[] = $uk;
+		}
+
+		foreach ( $output as $r )
+		{
+			if ( !array_key_exists( $r , $usbData ) )
+			{
+				$usbData[$r] = -1;
+				$waitSetUsb[] = $r;
+			}
+		}
+
+		$redis->writeByKey( 'usb.status' , json_encode( $usbData ) );
+		echo json_encode( $waitSetUsb );
+	}
+
+	/**
+	 * set usb state
+	 */
+	public function actionUsbset()
+	{
+		$redis = $this->getRedis();
+		$usbVal = $redis->readByKey( 'usb.status' );
+
+		$setUsbKey = isset( $_GET['usb'] ) ? htmlspecialchars( $_GET['usb'] ) : '';
+		$setUsbTo = isset( $_GET['to'] ) ? htmlspecialchars( $_GET['to'] ) : '';
+
+		if ( empty( $setUsbKey ) || empty( $setUsbTo ) )
+		{
+			echo '500';exit;
+		}
+
+		if ( !empty( $usbVal ) )
+			$usbData = json_decode( $usbVal , true );
+		else 
+		{
+			echo '500';exit;
+		}
+
+		if ( array_key_exists( $setUsbKey , $usbData ) && in_array( $setUsbTo , array( 'ltc' , 'btc' , '0' ) ) )
+			$usbData[ $setUsbKey ] = $setUsbTo;
+		else 
+		{
+			echo '500';exit;
+		}
+
+		$redis->writeByKey( 'usb.status' , json_encode( $usbData ) );
+		$this->restartByUsb( $setUsbKey , $setUsbTo , $setUsbKey );
+
+		echo '200';exit;
+	}
+
+	/**
+	 * restart target usb
+	 */
+	public function actionRestartTarget()
+	{
+		$setUsbKey = isset( $_GET['usb'] ) ? htmlspecialchars( $_GET['usb'] ) : '';
+		if ( empty( $setUsbKey ) )
+		{
+			echo '500';exit;
+		}
+
+		$redis = $this->getRedis();
+		$usbVal = $redis->readByKey( 'usb.status' );
+
+		if ( !empty( $usbVal ) )
+			$usbData = json_decode( $usbVal , true );
+		else 
+		{
+			echo '500';exit;
+		}
+
+		if ( array_key_exists( $setUsbKey , $usbData ) )
+			$setUsbTo = $usbData[$setUsbKey];
+		else 
+		{
+			echo '500';exit;
+		}
+
+		$this->restartByUsb( $setUsbKey , $setUsbTo , $setUsbKey );
+
+		echo '200';exit;
+	}
+
+	/**
+	 * get super model state
+	 */
+	public function getSuperModelState()
+	{
+		$redis = $this->getRedis();
+		$btcVal = $redis->readByKey( 'btc.setting' );
+		$aryBTCData = empty( $btcVal ) ? array() : json_decode( $btcVal , true );
+
+		return !empty( $aryBTCData ) && intval( $aryBTCData['su'] ) === 1 ? true : false;
+	}
+
+	/**
+	 * get redis connection
+	 */
+	public function getRedis()
+	{
+		if ( empty( $this->_redis ) )
+			$this->_redis = new CRedis();
+
+		return $this->_redis;
+	}
+
+//end class
 }

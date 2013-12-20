@@ -12,6 +12,7 @@
 <link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl;?>/css/index.css"/>
 <script language="javascript" type="text/javascript" src="<?php echo $this->baseUrl;?>/js/jquery.min.js"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $this->baseUrl;?>/js/bootstrap.min.js"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $this->baseUrl;?>/js/base.js"></script>
 <?php if( NBT_DEBUG ):?>
 <script language="javascript" type="text/javascript" src="<?php echo $this->baseUrl;?>/js/dump.js"></script>
 <?php endif;?>
