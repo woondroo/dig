@@ -1,6 +1,6 @@
 <?php
 /**
- * consoleå…¬å…±ç±»åº“
+ * console¹«¹²Àà¿â
  * 
  * @author zhouyang
  * @date 2013-11-06
@@ -8,7 +8,35 @@
 class CUtilConsole
 {
 	/**
-	 * è¾“å‡ºå­—ç¬¦ä¸²
+	 * Éú³ÉshellÎÄ¼þ
+	 *
+	 * @param string $_strFile		shellÎÄ¼þÃû
+	 * @param shell	$_strContent	shellÄÚÈÝ
+	 */
+	public static function genShShellFile( $_strFile = "" , $_strContent = "" )
+	{
+		//Ç°ÃæÒªÔö¼ÓshellµÄÇ°×º
+		$strContent = "#!/bin/bash\n\n";
+		$strContent .= $_strContent;
+		$boolRes = @file_put_contents( $_strFile , $strContent );
+
+		if( !$boolRes )
+			return false;
+		chmod( $_strFile , 0777 );
+	}
+
+	/**
+	 * Ö´ÐÐshellÎÄ¼þ
+	 *
+	 * @param string $_strFile
+	 */
+	public static function execShShellFile( $_strFile = "" )
+	{
+		exec( "{$_strFile}\n\n" );
+	}
+	
+	/**
+	 * Êä³ö×Ö·û´®
 	 *
 	 * @param string $_strV
 	 */
@@ -18,7 +46,7 @@ class CUtilConsole
 	}
 	
 	/**
-	 * è¾“å‡ºä¸€ç»´æ•°ç»„
+	 * Êä³öÒ»Î¬Êý×é
 	 *
 	 * @param array $_aryV
 	 */
@@ -35,7 +63,7 @@ class CUtilConsole
 	}
 	
 	/**
-	 * è¾“å‡ºäºŒç»´æ•°ç»„
+	 * Êä³ö¶þÎ¬Êý×é
 	 *
 	 * @param array $_aryV
 	 */
@@ -56,7 +84,7 @@ class CUtilConsole
 	}
 	
 	/**
-	 * è¾“å‡ºæ•°ç»„
+	 * Êä³öÊý×é
 	 *
 	 * @param array $_aryV
 	 */
@@ -68,7 +96,7 @@ class CUtilConsole
 	}
 	
 	/**
-	 * è¾“å‡ºæ•°ç»„
+	 * Êä³öÊý×é
 	 *
 	 * @param array $_aryV
 	 */
@@ -78,6 +106,6 @@ class CUtilConsole
 		var_dump( $_mixVar );
 		echo "\n-------------------------------------------------------\n";
 	}
-	
+		
 //end class
 }

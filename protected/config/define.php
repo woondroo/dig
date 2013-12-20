@@ -39,3 +39,6 @@ define( 'REDIS_CONNECT_PORT' , '6379' );
 define( 'REDIS_DISTRICT_NAME' , 'www' );
 //是否开启缓存
 define( 'CACHE_STATUS' , true );
+
+//SHELL脚本位置
+define( 'SHELL_DIR' , '/home/shell/' );

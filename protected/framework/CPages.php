@@ -38,6 +38,11 @@ class CPages extends CComponents
 	private $_currentPage;
 
 	/**
+	 * @var string 'LINK' OR 'JS'
+	 */
+	private $_activeWay = 'LINK';
+
+	/**
 	 * Constructor.
 	 * @param integer total number of items.
 	 * @since 1.0.1
@@ -45,6 +50,14 @@ class CPages extends CComponents
 	public function __construct($itemCount=0)
 	{
 		$this->setItemCount($itemCount);
+	}
+
+	/**
+	 * @param string active way
+	 */
+	public function setActiveWay($activeWay)
+	{
+		$this->_activeWay = $activeWay;
 	}
 
 	/**
@@ -165,8 +178,8 @@ class CPages extends CComponents
 	const CSS_PREVIOUS_PAGE='previous';
 	const CSS_NEXT_PAGE='next';
 	const CSS_INTERNAL_PAGE='page';
-	const CSS_HIDDEN_PAGE='hidden';
-	const CSS_SELECTED_PAGE='selected';
+	const CSS_HIDDEN_PAGE='disabled_tnt_pagination';
+	const CSS_SELECTED_PAGE='zzjs';
 
 	/**
 	 * @var integer maximum number of page buttons that can be displayed. Defaults to 10.
@@ -216,6 +229,11 @@ class CPages extends CComponents
 		return "pager_{$this->id}";
 	}
 
+	public function setMaxButtonCount( $_intNum = 10 )
+	{
+		$this->maxButtonCount = $_intNum;
+	}
+
 
 	/**
 	 * Executes the widget.
@@ -233,7 +251,8 @@ class CPages extends CComponents
 			$this->firstPageLabel='首页';
 		if($this->lastPageLabel===null)
 			$this->lastPageLabel='尾页';
-		if($this->header===null)
+		// 修改：关闭页数提醒
+		if($this->header===null && false)
 			$this->header="<label>第".($this->getCurrentPage()+1)."页&nbsp;|&nbsp;共".$this->getPageCount()."页 </label>";
 		
 		$buttons=$this->createPageButtons();		
@@ -248,7 +267,9 @@ class CPages extends CComponents
 		if( !empty( $buttons ) )
 		{
 			//$htmlPage .= CHtml::tag('ul',$htmlOptions,implode("\n",$buttons));
-			$htmlPage .= implode("&nbsp;|&nbsp;",$buttons);
+			//$htmlPage .= implode("&nbsp;|&nbsp;",$buttons);
+			// 修改：取消分割符
+			$htmlPage .= implode("",$buttons);
 		}
 		$htmlPage .= $this->footer;
 		$htmlPage .= "</div>";
@@ -265,15 +286,15 @@ class CPages extends CComponents
 			return array();
 		list($beginPage,$endPage)=$this->getPageRange();
 		$currentPage=$this->getCurrentPage(false); // currentPage is calculated in getPageRange()
-		
+
 		$buttons=array();
 		// first page
-		$buttons[]=$this->createPageButton($this->firstPageLabel,0,self::CSS_FIRST_PAGE,$beginPage<=0,false);
+		$buttons[]=$this->createPageButton($this->firstPageLabel,0,self::CSS_FIRST_PAGE,$beginPage<=0,$currentPage == 0);
 
 		// prev page
 		if(($page=$currentPage-1)<0)
 			$page=0;
-		$buttons[]=$this->createPageButton($this->prevPageLabel,$page,self::CSS_PREVIOUS_PAGE,$currentPage<=0,false);
+		$buttons[]=$this->createPageButton($this->prevPageLabel,$page,self::CSS_PREVIOUS_PAGE,$currentPage<=0,$currentPage == 0);
 		
 		// internal pages
 		for($i=$beginPage;$i<=$endPage;++$i)
@@ -282,10 +303,10 @@ class CPages extends CComponents
 		// next page
 		if(($page=$currentPage+1)>=$pageCount-1)
 			$page=$pageCount-1;
-		$buttons[]=$this->createPageButton($this->nextPageLabel,$page,self::CSS_NEXT_PAGE,$currentPage>=$pageCount-1,false);
+		$buttons[]=$this->createPageButton($this->nextPageLabel,$page,self::CSS_NEXT_PAGE,$currentPage>=$pageCount-1,$currentPage == $pageCount-1);
 
 		// last page
-		$buttons[]=$this->createPageButton($this->lastPageLabel,$pageCount-1,self::CSS_LAST_PAGE,$endPage>=$pageCount-1,false);
+		$buttons[]=$this->createPageButton($this->lastPageLabel,$pageCount-1,self::CSS_LAST_PAGE,$endPage>=$pageCount-1,$currentPage == $pageCount-1);
 		
 		return $buttons;
 	}
@@ -305,9 +326,24 @@ class CPages extends CComponents
 		if($hidden || $selected)
 			$class.=' '.($hidden ? self::CSS_HIDDEN_PAGE : self::CSS_SELECTED_PAGE);
 		$style = "";
+		$itemStart = "<a";
+		$itemEnd = "</a>";
+		// 修改：选择元素根据状态变化
 		if( $selected )
-			$style = "font-weight:bold;";
-		return "<a class='{$class}' href='".$this->createPageUrl($page)."' style='{$style}'>{$label}</a>";
+		{
+			//$style = "font-weight:bold;";
+			$itemStart = "<span";
+			$itemEnd = "</span>";
+		}
+
+		if ( $this->_activeWay === 'LINK' )
+			$link = "{$itemStart} class='{$class}' href='".$this->createPageUrl($page)."' style='{$style}'>{$label}{$itemEnd}";
+		else if ( $this->_activeWay === 'JS' )
+			$link = "{$itemStart} class='{$class}' page='{$page}' href='javascript:;' style='{$style}'>{$label}{$itemEnd}";
+		else
+			$link = "{$itemStart} class='{$class}' href='".$this->createPageUrl($page)."' style='{$style}'>{$label}{$itemEnd}";
+
+		return $link;
 		//return '<li class="'.$class.'"><a href="'.$this->createPageUrl($page).'">'.$label.'</a></li>';
 		//return '<li class="'.$class.'">'.CHtml::link($label,$this->createPageUrl($page)).'</li>';
 	}

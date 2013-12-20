@@ -27,8 +27,6 @@ class CApi
 		foreach ( $_aryData as $k=>$v )
 			$url .= "&{$k}=".urlencode($v);
 		$url .= "&sign={$sign}";
-		//throw new CModelException($url);
-		//echo $url;
 		// 初始化一个 cURL 对象
 		$curl = curl_init();
 		// 设置你需要抓取的URL

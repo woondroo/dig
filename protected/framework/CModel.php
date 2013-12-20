@@ -116,7 +116,7 @@ abstract class CModel extends CApplicationComponents
 		}
 		$aryConfigFieldCnName = $this->fieldCnName();
 		$keyCn = isset( $aryConfigFieldCnName[$_key] ) ? $aryConfigFieldCnName[$_key] : $_key;
-		$this->_aryError[$_key][] = $keyCn."　".$_val;
+		$this->_aryError[$_key][] = $keyCn.$_val;
 		//unique
 		$this->_aryError[$_key] = array_unique( $this->_aryError[$_key] );
 	}

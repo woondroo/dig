@@ -7,6 +7,7 @@
 	var swfu;
 	var jsonPostParams = {};
 		jsonPostParams.PHPSESSID = "<?php echo session_id(); ?>";
+		jsonPostParams.r = "admin/uploadHeadImg";
 	<?php foreach( $this->postData as $k=>$v ):?>
 		jsonPostParams.<?php echo $k?> = "<?php echo $v;?>";
 	<?php endforeach;?>

@@ -52,7 +52,6 @@ abstract class CApplication extends CComponents
 		$this->getRequest();
 		
 		$this->processRequest();
-			
 	}
 	
 	/**
@@ -142,7 +141,7 @@ abstract class CApplication extends CComponents
 			}
 			catch(Exception $e)
 			{
-				$this->displayError( $code,$message,$file,$line );
+				$this->displayException($e);
 			}
 		}
 	}
@@ -204,7 +203,15 @@ abstract class CApplication extends CComponents
 	 */
 	public function displayExceptionPage( $statuscode , $exception )
 	{
-		include( NBT_APPLICATION_PATH."/views/systems/{$statuscode}.php" );
+		if( $this instanceof CWebApplication )
+		{
+			include( NBT_APPLICATION_PATH."/views/systems/{$statuscode}.php" );
+		}
+		else
+		{
+			echo $exception->getMessage();
+		}
+		exit();
 	}
 	
 	/**
@@ -256,23 +263,7 @@ abstract class CApplication extends CComponents
 			$this->components['request'] = $request;
 		}
 		return $this->components['request'];
-	}
-	
-	/**
-	 * 获取session对像
-	 *
-	 * @return CHttpSession
-	 */
-	public function getSession()
-	{
-		if( !isset( $this->components['session'] ) )
-		{
-			$session = new CHttpSession();
-			$session->init();
-			$this->components['session'] = $session;
-		}
-		return $this->components['session'];
-	}
+	}	
 	
 //end class
 }

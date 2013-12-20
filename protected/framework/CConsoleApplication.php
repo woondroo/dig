@@ -76,8 +76,8 @@ class CConsoleApplication extends CApplication
 				break;
 			default:
 				throw new CException( 'Route name error.' );
-		}
-		
+		}		
+		Nbt::app()->user->systemLogin();
 		$controller = ucfirst( $controllerName ).'Controller';
 		$action = 'action'.ucfirst( $actionName );
 		$c = new $controller();

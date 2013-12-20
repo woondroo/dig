@@ -5,7 +5,7 @@ class CValidator
 	{
 		if( self::isEmpty( $_val ) )
 		{
-			$_message = empty( $_message ) ? "不能为空." : $_message;
+			$_message = empty( $_message ) ? "can not be empty." : $_message;
 			return false;
 		}
 		return true;
@@ -23,11 +23,11 @@ class CValidator
 		$message = "";
 		if( $min !== null && $length < $min )
 		{
-			$message = empty( $message ) ? "长度必须大于{$min}." : $message;
+			$message = empty( $message ) ? "min length is {$min}." : $message;
 		}
 		if( $max !== null && $length > $max )
 		{
-			$message = empty( $message ) ? "长度必须小于{$max}." : $message;
+			$message = empty( $message ) ? "max length is {$max}." : $message;
 		}
 		$_message = empty( $_message ) ? $message : $_message;
 		return empty( $message ) ? true : false;
@@ -52,37 +52,37 @@ class CValidator
 			case '==':
 				if( ($strict && $_val !== $compareValue) || (!$strict && $_val != $compareValue) )
 				{
-					$message = "必须等于`{$compareValue}`";
+					$message = "must be equal to `{$compareValue}`";
 				}
 				break;
 			case '!=':
 				if(($strict && $_val===$compareValue) || (!$strict && $_val==$compareValue))
 				{
-					$message = "不能等于`{$compareValue}`";
+					$message = "must not be equal to `{$compareValue}`";
 				}
 				break;
 			case '>':
 				if( $_val <= $compareValue )
 				{
-					$message = "必须大于`{$compareValue}`";
+					$message = "must be greater than `{$compareValue}`";
 				}
 				break;
 			case '>=':
 				if( $_val < $compareValue )
 				{
-					$message = "必须大于等于`{$compareValue}`";
+					$message = "must be greater than or equal to `{$compareValue}`";
 				}
 				break;
 			case '<':
 				if( $_val >= $compareValue )
 				{
-					$message = "必须小于`{$compareValue}`";
+					$message = "must be less than `{$compareValue}`";
 				}
 				break;
 			case '<=':
 				if( $_val > $compareValue )
 				{
-					$message = "必须小于等于`{$compareValue}`";
+					$message = "must be less than or equal to `{$compareValue}`";
 				}
 				break;
 			default:
@@ -103,7 +103,7 @@ class CValidator
 		
 		if( !preg_match( $pattern , $_val ) )
 		{
-			$message = "格式不正确.";
+			$message = "is not a valid email address.";
 		}
 		$_message = empty( $_message ) ? $message : $_message;
 		return empty( $message ) ? true : false;
@@ -124,23 +124,23 @@ class CValidator
 		{
 			if(!preg_match('/^\s*[+-]?\d+\s*$/',"$_val"))
 			{
-				$message="必须为整数";
+				$message=" must be an integer.";
 			}
 		}
 		else
 		{
 			if(!preg_match('/^\s*[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*$/',"$_val"))
 			{
-				$message="必须为整数.";
+				$message=" must be a number.";
 			}
 		}
 		if( $min!==null && $_val< $min)
 		{
-			$message="必须大于{$min}.";
+			$message=" is too small (minimum is {$min} ).";
 		}
 		if( $max !==null && $_val > $max )
 		{
-			$message="必须小于{$max}.";
+			$message=" is too big (maximum is {$max} ).";
 		}
 				
 		$_message = empty( $_message ) ? $message : $_message;
@@ -162,7 +162,7 @@ class CValidator
 			
 		if( CDateTimeParser::parse( $_val , $format ) === false )
 		{
-			$message = "日期格式不正确`{$format}`";	
+			$message = " is must be `{$format}`";	
 		}
 		
 		$_message = empty( $_message ) ? $message : $_message;
@@ -184,7 +184,7 @@ class CValidator
 			
 		if( CDateTimeParser::parse( $_val , $format ) === false )
 		{
-			$message = "日期格式不正确 `{$format}`";	
+			$message = " is must be `{$format}`";	
 		}
 		
 		$_message = empty( $_message ) ? $message : $_message;
@@ -204,7 +204,7 @@ class CValidator
 			throw new CException( 'The "format" property is not be defined.' );
 		if( CDateTimeParser::parse( $_val , $format ) === false )
 		{
-			$message = "时间格式不正确`{$format}`";	
+			$message = " is must be `{$format}`";	
 		}
 		
 		$_message = empty( $_message ) ? $message : $_message;
@@ -229,15 +229,15 @@ class CValidator
 			
 		if( $min!==null && $length< $min)
 		{
-			$message="长度必须大于{$min}位 ).";
+			$message=" is too small (minimum is {$min} ).";
 		}
 		if( $max !==null && $length > $max )
 		{
-			$message="长度必须小于($max)位.";
+			$message=" is too big (maximum is {$max} ).";
 		}
 		if( $is !== null && $length !== $is )
 		{
-			$message="长度(必须为{$is}位)";
+			$message=" is of the wrong length (should be {$is} characters)";
 		}
 				
 		$_message = empty( $_message ) ? $message : $_message;
@@ -255,7 +255,7 @@ class CValidator
 		
 		if( !is_array( $_val ) )
 		{
-			$message = "必须为数组";	
+			$message = " is must be an array";	
 		}
 		
 		$_message = empty( $_message ) ? $message : $_message;
@@ -265,24 +265,14 @@ class CValidator
 	public static function cInteger( $_val = null , $_aryParams = array() , &$_message = "" )
 	{
 		$allowEmpty = isset( $_aryParams['allowEmpty'] ) ? $_aryParams['allowEmpty'] : false;
-		$min = isset( $_aryParams['min'] ) ? $_aryParams['min'] : null;
-		$max = isset( $_aryParams['max'] ) ? $_aryParams['max'] : null;
-		
 		$pattern = "/^[-+]?[0-9]+$/";
 		$message = "";
 		
 		if( !preg_match( $pattern , trim($_val) ) )
 		{
-			$message = "必须为数字.";
+			$message = "is must be integer.";
 		}
-		if( $min !== null && $_val < $min )
-		{
-			$message = empty( $message ) ? "必须大于{$min}." : $message;
-		}
-		if( $max !== null && $_val > $max )
-		{
-			$message = empty( $message ) ? "必须小于{$max}." : $message;
-		}
+		
 		$_message = empty( $_message ) ? $message : $_message;
 		return empty( $message ) ? true : false;
 	}
@@ -290,22 +280,12 @@ class CValidator
 	public static function cFloat( $_val = null , $_aryParams = array() , &$_message = "" )
 	{
 		$allowEmpty = isset( $_aryParams['allowEmpty'] ) ? $_aryParams['allowEmpty'] : false;
-		$min = isset( $_aryParams['min'] ) ? $_aryParams['min'] : null;
-		$max = isset( $_aryParams['max'] ) ? $_aryParams['max'] : null;
 		$pattern = "/^[-+]?([0-9]*\.)?[0-9]+([eE][-+]?[0-9]+)?$/";
 		$message = "";
 		
 		if( !preg_match( $pattern , $_val ) )
 		{
-			$message = "必须为小数.";
-		}
-		if( $min !== null && $_val < $min )
-		{
-			$message = empty( $message ) ? "必须大于{$min}." : $message;
-		}
-		if( $max !== null && $_val > $max )
-		{
-			$message = empty( $message ) ? "必须小于{$max}." : $message;
+			$message = "is must be float.";
 		}
 		
 		$_message = empty( $_message ) ? $message : $_message;
@@ -323,7 +303,7 @@ class CValidator
 		
 		if( !preg_match( $pattern , $_val ) )
 		{
-			$message = "不是一个可验证的URL.";
+			$message = "is not a valid URL.";
 		}
 		
 		$_message = empty( $_message ) ? $message : $_message;

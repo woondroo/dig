@@ -228,5 +228,16 @@ class CRedis extends CApplicationComponents
 		return true;
 	}
 
+	/**
+	 * 保存数据
+	 *
+	 * @return bool
+	 */
+	public function saveData( $_intDistrict = '' )
+	{
+		$data = self::getConnection()->bgSave();
+		return $data;
+	}
+
 //end class
 }

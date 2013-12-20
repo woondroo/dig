@@ -103,7 +103,7 @@ class CUrlManager extends CApplicationComponents
 		// 开始为规则初始化，生成对应的规则匹配对象
 		foreach ( $this->rules as $pattern=>$route )
 			$this->_rules[] = $this->createUrlRule( $route , $pattern );
-		
+
 		// 如果缓存允许，则将规则缓存起来
 		if ( isset( $cacheObj ) && $this->cacheRules === true )
 			$cacheObj->writeByKey( self::CACHE_KEY , serialize( $this->_rules ) );

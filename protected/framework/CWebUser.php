@@ -70,6 +70,20 @@ class CWebUser extends CApplicationComponents
 	}
 	
 	/**
+	 * system Login
+	 * 
+	 * 
+	 */
+	public function systemLogin()
+	{
+		/*$aryUserInfo = array();
+		$aryUserInfo['userId'] = ChannelToolUtil::NAME_SYSTEM;
+		$aryUserInfo['programList'] = ':ch_datafeed_run:ch_datafeed_runlist:ch_datafeed_upload:';
+		$this->login( $aryUserInfo );
+		unset($aryUserInfo);*/
+	}
+	
+	/**
 	 * user logout, clear session and destroy session.
 	 * 
 	 */
@@ -139,6 +153,46 @@ class CWebUser extends CApplicationComponents
 	}
 	
 	/**
+	 * 设置教师ID
+	 *
+	 * @param int $_intId
+	 */
+	public function setTeacherId( $_intId = null )
+	{
+		$_SESSION['__tid'] = $_intId;
+	}
+	
+	/**
+	 * 获取用户ID
+	 *
+	 * @return int
+	 */
+	public function getTeacherId()
+	{
+		return $_SESSION['__tid'];
+	}
+	
+	/**
+	 * 设置教师ID
+	 *
+	 * @param int $_intId
+	 */
+	public function setTeacherName( $_strUname = null )
+	{
+		$_SESSION['__tname'] = $_strUname;
+	}
+	
+	/**
+	 * 获取用户ID
+	 *
+	 * @return int
+	 */
+	public function getTeacherName()
+	{
+		return $_SESSION['__tname'];
+	}
+	
+	/**
 	 * 设置管理员ID
 	 *
 	 * @param int $_intId
@@ -176,6 +230,26 @@ class CWebUser extends CApplicationComponents
 	public function getAdminName()
 	{
 		return $_SESSION['__aname'];
+	}
+
+	/**
+	 * 设置前台会员 ID
+	 *
+	 * @param int $_intId
+	 */
+	public function setUserId( $_intId = null )
+	{
+		$_SESSION['__uid'] = $_intId;
+	}
+	
+	/**
+	 * 获得前台会员 ID
+	 *
+	 * @return int
+	 */
+	public function getUserId()
+	{
+		return $_SESSION['__uid'];
 	}
 	
 	/**

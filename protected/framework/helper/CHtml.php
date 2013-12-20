@@ -804,5 +804,19 @@ class CHtml
 		return htmlspecialchars_decode( $_val );
 	}
 	
+	/**
+	 * 根据查询的字段，数据库名，以及查询条件返回条件对象
+	 * @param $_strData string,$_strTable string,$_strCondition string
+	 * @return CDbCriteria
+	 * @author zhaojingyun
+	 */
+	public function makeCondition($_strData='',$_strTable='',$_strCondition='',$_strOrder= ''){
+		$objCondition = new CDbCriteria();
+		$objCondition->select = $_strData;
+		$objCondition->from = $_strTable;
+		$objCondition->condition = $_strCondition;
+		$objCondition->order = $_strOrder;
+		return $objCondition;
+	}
 //end class
 }

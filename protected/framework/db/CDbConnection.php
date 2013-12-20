@@ -9,7 +9,8 @@ class CDbConnection
 				'ftp'=>'getFTPDbConnection',
 				'web'=>'getWebDbConnection',
 				'order'=>'getOrderDbConnection',
-				'account'=>'getAccountDbConnection'
+				'account'=>'getAccountDbConnection',
+				'comment'=>'getCommentDbConnection'
 			);
 
 	/**
@@ -85,6 +86,26 @@ class CDbConnection
 			$db->setUserName( DB_ACCOUNT_USERNAME );
 			$db->setPassword( DB_ACCOUNT_PASSWORD );
 			$db->setChargset( DB_ACCOUNT_CHARGSET );
+			$db->connect();
+			
+			self::$_dbConnectionAccount = $db;
+		}
+		return self::$_dbConnectionAccount;
+	}
+
+	/**
+	 * 获得评论数据库DB connection()
+	 * @return CPdo
+	 */
+	public static function getCommentDbConnection()
+	{
+		if( self::$_dbConnectionAccount === null )
+		{
+			$db = new CPdo(); 
+			$db->setDsn( DB_COMMENT_DSN );
+			$db->setUserName( DB_COMMENT_USERNAME );
+			$db->setPassword( DB_COMMENT_PASSWORD );
+			$db->setChargset( DB_COMMENT_CHARGSET );
 			$db->connect();
 			
 			self::$_dbConnectionAccount = $db;

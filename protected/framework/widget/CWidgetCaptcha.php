@@ -28,7 +28,7 @@ class CWidgetCaptcha extends CWidget
 		if( self::checkRequirements('imagick') || self::checkRequirements('gd') )
 		{
 			$this->renderImage();
-			$this->renderChangeImageLink();
+			if ( $this->imageOptions['changebt'] !== false ) $this->renderChangeImageLink();
 		}
 		else
 			throw new CException( "GD with FreeType or ImageMagick PHP extensions are required." );
@@ -56,7 +56,7 @@ class CWidgetCaptcha extends CWidget
 	{
 		echo '<span id="jqChangeCaptcha">看不请?换一张</span>';
 		$url = Nbt::app()->createUrl( 'captcha/index' );
-		echo '<script>$(function(){ $("#jqChangeCaptcha").click(function(){ $("#jqCaptcha").attr("src","'.$url.'&random="+Math.random()); }); });</script>';
+		echo '<script>$(function(){ $("#jqChangeCaptcha").click(function(){ $("#jqCaptcha").attr("src","'.$url.(REWRITE_MODE===true?'?':'&').'random="+Math.random()); }); });</script>';
 	}
 	
 	/**
