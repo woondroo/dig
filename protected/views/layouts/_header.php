@@ -15,11 +15,11 @@
         <li<?php echo $this->id == 'index' ? ' class="active"' : '' ?>><a href="<?php echo $this->createUrl( 'index/index' ); ?>">设置中心</a></li>
         <li<?php echo $this->id == 'monitor' ? ' class="active"' : '' ?>><a href="<?php echo $this->createUrl( 'monitor/index' ); ?>">监控中心</a></li>
       </ul>
-      <ul id="action-header" class="nav navbar-nav navbar-right">
-	<li><a href="javascript:;" id="action-restart">立即重启</a></li>
-        <li><a href="javascript:;" id="action-run">正常运行</a></li>
-	<li><a href="javascript:;" id="action-super">超频运行</a></li>
-        <li><a href="javascript:;" id="action-stop">停止运行</a></li>
+	  <ul id="action-header" class="nav navbar-nav navbar-right">
+	    <li><a href="javascript:;" id="action-restart">立即重启</a></li>
+	    <li><a href="javascript:;" id="action-run">正常运行</a></li>
+	    <li><a href="javascript:;" id="action-super">超频运行</a></li>
+	    <li><a href="javascript:;" id="action-stop">停止运行</a></li>
       </ul>
     </div>
   </div>

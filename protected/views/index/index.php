@@ -3,7 +3,7 @@ $aryStatus = array( 'success'=>'alert-success' , 'warning'=>'alert-warning' , 'e
 ?>
 <div class="container">
   <div class="page-header">
-    <h1>Setting!</h1>
+    <h1>Setting! 设置中心</h1>
   </div>
   <div class="alert alert-warning">
     <strong>注意!</strong> 请仔细核对您的矿池地址和矿工号，否则无法正常运行！

@@ -1,6 +1,6 @@
 <?php
 /**
- * Blank Controller
+ * Index Controller
  * 
  * @author wengebin
  * @date 2013-12-15
@@ -24,7 +24,7 @@ class IndexController extends BaseController
 	{
 		try
 		{
-			$this->replaceSeoTitle( 'BTC & LTC ÍÚ¿óÉèÖÃ' );
+			$this->replaceSeoTitle( 'BTC & LTC æŒ–çŸ¿è®¾ç½®' );
 
 			// open redis
 			$redis = $this->getRedis();
@@ -66,11 +66,11 @@ class IndexController extends BaseController
 				$redis->saveData();
 				
 				$aryTipData['status'] = 'success';
-				$aryTipData['text'] = '±£´æ³É¹¦!';
+				$aryTipData['text'] = 'ä¿å­˜æˆåŠŸ!';
 			}
 		} catch ( Exception $e ) {
 			$aryTipData['status'] = 'error';
-			$aryTipData['text'] = '±£´æÊ§°Ü!';
+			$aryTipData['text'] = 'ä¿å­˜å¤±è´¥!';
 		}
 
 		$aryData = array();

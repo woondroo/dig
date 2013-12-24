@@ -13,7 +13,8 @@ class UtilUrl
 						// usb=/dev/ttyUSB0 | to=btc|ltc|0
 						'usbset'=>'index/usbset',
 						// usb=/dev/ttyUSB0
-						'restartTar'=>'index/restartTarget'
+						'restartTar'=>'index/restartTarget',
+						'monitor'=>'monitor/index'
 					);
 
 	/**
