@@ -64,7 +64,6 @@ var actions = {
 			},
 			fail	: function(){
 				actions.setting.runstate = false;
-				alert( 'request fail!' );
 			}
 		});
 	}
@@ -105,9 +104,10 @@ var actionSuccess = {
 
 		actions.setting.runstate = false;
 		resetTopBt.check();
+		actions.check();
 	},
 	restartTar_success : function( data ){
-		alert( data );
+		return true;
 	},
 	shutdown_success : function( data ){
 		if ( data === -1 )
@@ -122,6 +122,7 @@ var actionSuccess = {
 
 		actions.setting.runstate = false;
 		resetTopBt.check();
+		actions.check();
 	},
 	supermode_success : function( data ){
 		if ( data === -1 )
@@ -136,6 +137,7 @@ var actionSuccess = {
 
 		actions.setting.runstate = false;
 		resetTopBt.check();
+		actions.check();
 	},
 	normalmode_success : function( data ){
 		if ( data === -1 )
@@ -150,8 +152,11 @@ var actionSuccess = {
 
 		actions.setting.runstate = false;
 		resetTopBt.check();
+		actions.check();
 	},
 	usbstate_success : function( data ){
+		if ( data === -1 ) return;
+
 		data = eval( '('+data+')' );
 
 		var html = '';
@@ -192,15 +197,182 @@ var actionSuccess = {
 		}
 
 		$('#new-machine-container').html( html );
+		
+		$('.btn-run-btc').click(function(){
+			actions.usbset( $(this).attr('tar') , 'btc' );
+			$(this).parent().html( '正在设置并运行...<br><br><br>' );
+		});
+
+		$('.btn-run-ltc').click(function(){
+			actions.usbset( $(this).attr('tar') , 'ltc' );
+			$(this).parent().html( '正在设置并运行...<br><br><br>' );
+		});
 	},
 	usbset_success : function( data ){
-		alert( data );
+		return true;
 	},
 	check_success : function( data ){
-		alert( data );
+		if ( data === -1 ) return;
+
+		data = eval( '('+data+')' );
+
+		var html_btc = '';
+		var html_ltc = '';
+
+		// null objects
+		var null_data = [null,undefined,'',[],{}];
+		
+		// init data
+		var btc_data = {count:0,lines:0,last:0,circle:0};
+		var ltc_data = {count:0,lines:0,last:0,circle:0};
+
+		// init machine object
+		var btc_machine = {};
+		var ltc_machine = {};
+
+		// alived machine not empty
+		if ( !in_array( data.alived , null_data ) )
+		{
+			for ( var key in data.alived )
+			{
+				var key_set = replaceAll( '/' , '_' , key );
+				if ( data.alived[key] === 'btc' )
+				{
+					eval( 'btc_machine.'+key_set+' = 1;' );
+					btc_data.count ++;
+				}
+
+				if ( data.alived[key] === 'ltc' )
+				{
+					eval( 'ltc_machine.'+key_set+' = 1;' );
+					ltc_data.count ++;
+				}
+			}
+		}
+
+		// died machine not empty
+		if ( !in_array( data.died , null_data ) )
+		{
+			for ( var key in data.died )
+			{
+				var key_set = replaceAll( '/' , '_' , key );
+				if ( data.died[key] === 'btc' )
+				{
+					eval( 'btc_machine.'+key_set+' = -1;' );
+					btc_data.count ++;
+				}
+
+				if ( data.died[key] === 'ltc' )
+				{
+					eval( 'ltc_machine.'+key_set+' = -1;' );
+					ltc_data.count ++;
+				}
+			}
+		}
+
+		btc_data.lines = Math.ceil( btc_data.count / 3 );
+		btc_data.last = btc_data.count % 3;
+
+		ltc_data.lines = Math.ceil( ltc_data.count / 3 );
+		ltc_data.last = ltc_data.count % 3;
+
+
+		// start btc machine check....
+		if ( Object.keys( btc_machine ).length === 0 || in_array( btc_machine , null_data ) )
+		{
+			html_btc = replaceAll( '{data-tip}' , '暂无BTC设备!' , this.templates.nulldata );
+		}
+		else
+		{
+			for ( var key in btc_machine )
+			{
+				var key_set = replaceAll( '_' , '/' , key );
+				if ( btc_data.circle === 0 )
+					html_btc += '<div class="col-sm-4">';
+
+				var tmp_str = replaceAll( '{usb-port}' , key_set , this.templates.btcstate );
+				tmp_str = replaceAll( '{usb-run-tip-type}' , btc_machine[key] === 1 ? 'default' : 'warning' , tmp_str );
+				tmp_str = replaceAll( '{usb-text}' , btc_machine[key] === 1 ? '正在运行BTC [正常]' : '目标运行BTC [已停止]' , tmp_str );
+				tmp_str = replaceAll( '{usb-restart-text}' , btc_machine[key] === 1 ? '重启' : '立即启动' , tmp_str );
+				html_btc += tmp_str;
+
+				btc_data.circle ++;
+				if ( btc_data.circle === btc_data.lines && btc_data.last > 0 )
+				{
+					html_btc += '</div>';
+					btc_data.last --;
+					btc_data.circle = 0;
+				}
+				else if ( btc_data.circle === btc_data.lines-1 && btc_data.last <= 0 )
+				{
+					html_btc += '</div>';
+					btc_data.circle = 0;
+				}
+			}
+
+			if ( btc_data.circle > 0 )
+				html_btc += '</div>';
+		}
+
+
+		// start ltc machine check....
+		if ( Object.keys( ltc_machine ).length === 0 || in_array( ltc_machine , null_data ) )
+		{
+			html_ltc = replaceAll( '{data-tip}' , '暂无LTC设备!' , this.templates.nulldata );
+		}
+		else
+		{
+			for ( var key in ltc_machine )
+			{
+				var key_set = replaceAll( '_' , '/' , key );
+				if ( ltc_data.circle === 0 )
+					html_ltc += '<div class="col-sm-4">';
+
+				var tmp_str = replaceAll( '{usb-port}' , key_set , this.templates.ltcstate );
+				tmp_str = replaceAll( '{usb-run-tip-type}' , ltc_machine[key] === 1 ? 'default' : 'warning' , tmp_str );
+				tmp_str = replaceAll( '{usb-text}' , ltc_machine[key] === 1 ? '正在运行LTC [正常]' : '目标运行LTC [已停止]' , tmp_str );
+				tmp_str = replaceAll( '{usb-restart-text}' , ltc_machine[key] === 1 ? '重启' : '立即启动' , tmp_str );
+				html_ltc += tmp_str;
+
+				ltc_data.circle ++;
+				if ( ltc_data.circle === ltc_data.lines && ltc_data.last > 0 )
+				{
+					html_ltc += '</div>';
+					ltc_data.last --;
+					ltc_data.circle = 0;
+				}
+				else if ( ltc_data.circle === ltc_data.lines-1 && ltc_data.last <= 0 )
+				{
+					html_ltc += '</div>';
+					ltc_data.circle = 0;
+				}
+			}
+
+			if ( ltc_data.circle > 0 )
+				html_ltc += '</div>';
+		}
+
+		$('#btc-machine-container').html( html_btc );
+		$('#ltc-machine-container').html( html_ltc );
+		
+		$('.btn-run-btc').click(function(){
+			actions.usbset( $(this).attr('tar') , 'btc' );
+			$(this).parent().html( '正在设置并运行...<br><br><br>' );
+		});
+
+		$('.btn-run-ltc').click(function(){
+			actions.usbset( $(this).attr('tar') , 'ltc' );
+			$(this).parent().html( '正在设置并运行...<br><br><br>' );
+		});
+
+		$('.btn-run-restart').click(function(){
+			actions.restartTar( $(this).attr('tar') );
+			$(this).parent().html( '正在启动此设备...<br><br><br>' );
+		});
 	}
 };
 
+// check navigation state
 var resetTopBt = {
 	check : function(){
 		actions.sendPost( "resetTopBt.checkResult(r)" , actions.setting.url_check , {} , 1 );
@@ -232,6 +404,7 @@ var resetTopBt = {
 	}
 };
 
+// navigation button active method
 var headerBt = {
 	init : function(){
 		this.restartBt();
@@ -275,6 +448,7 @@ var headerBt = {
 	}
 };
 
+// timeout reset top navigation
 function timerResetTopBt()
 {
 	if ( actions.setting.runstate === false ) resetTopBt.check();
@@ -283,9 +457,36 @@ function timerResetTopBt()
 	} , 5000 );
 }
 
+// replace all matched string
 function replaceAll(find, replace, str)
 {
 	return str.replace(new RegExp(find, 'g'), replace);
+}
+
+// object is or not in array
+function in_array(needle, haystack, argStrict)
+{
+	var key = '',
+	strict = !! argStrict;
+
+	if (strict)
+	{
+		for (key in haystack)
+		{
+			if (haystack[key] === needle)
+				return true;
+		}
+	}
+	else
+	{
+		for (key in haystack)
+		{
+			if (haystack[key] == needle)
+				return true;
+		}
+	}
+
+	return false;
 }
 
 $(document).ready(function(){
