@@ -110,7 +110,7 @@ class UpgradeController extends BaseController
 				throw new CModelException( '当前版本无需升级！' );
 
 			// execute upgrade
-			$command = "cd ".WEB_ROOT.";wget ".MAIN_DOMAIN."/down/{$strVersion}.zip;sudo unzip -o {$strVersion}.zip;";
+			$command = "cd ".WEB_ROOT.";wget ".MAIN_DOMAIN."/down/v{$strVersion}.zip;sudo unzip -o v{$strVersion}.zip;sudo rm -rf v{$strVersion}.zip;";
 			exec( $command );
 			
 			$isok = 1;
