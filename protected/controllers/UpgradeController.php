@@ -31,6 +31,7 @@ class UpgradeController extends BaseController
 	/**
 	 * Check version method
 	 */
+/*
 	public function actionCheckversion()
 	{
 		// get client version
@@ -47,8 +48,11 @@ class UpgradeController extends BaseController
 		$msg = "";
 		try
 		{
+			$aryData = array();
+			$aryData['version'] = $strVersion;
+			$aryData['time'] = $timestamp;
 			// check sign
-			if( !CApi::verifySign( $_GET , $sign , MAIN_DOMAIN_KEY ) )
+			if( !CApi::verifySign( $aryData , $sign , MAIN_DOMAIN_KEY ) )
 				throw new CModelException( "签名认证失败" );
 
 			if ( $strVersion < MAIN_DOMAIN )
@@ -75,18 +79,26 @@ class UpgradeController extends BaseController
 		echo $this->encodeAjaxData( $isok , $data , $msg );
 		exit();
 	}
+*/
 
 	/**
 	 * Check is has new version method
 	 */
-	public function actionHasnew()
+	public function actionHasnew( $_boolIsExit = false )
 	{
 		// check version
 		$aryVersionData = UtilApi::callCheckNewVersion( CUR_VERSION );
 		
-		header('Content-Type: text/html; charset=utf-8');
-		echo json_encode( $aryVersionData );
-		exit();
+		if ( $_boolIsExit === false )
+		{
+			header('Content-Type: text/html; charset=utf-8');
+			echo json_encode( $aryVersionData );
+			exit();
+		}
+		else
+		{
+			return $aryVersionData;
+		}
 	}
 
 	/**
@@ -94,8 +106,8 @@ class UpgradeController extends BaseController
 	 */
 	public function actionUpgradeversion()
 	{
-		// get up to version
-		$strVersion = isset( $_REQUEST['version'] ) ? htmlspecialchars( trim( $_REQUEST['version'] ) ) : '';
+		// check is newest
+		$aryVersionData = $this->actionHasnew( true );
 
 		$isok = 0;
 		$data = array();
@@ -103,6 +115,12 @@ class UpgradeController extends BaseController
 
 		try
 		{
+			if ( $aryVersionData['ISOK'] !== 1 || empty( $aryVersionData['DATA']['v'] ) )
+				throw new CModelException( '当前版本无需升级！' );
+
+			// get up to version
+			$strVersion = $aryVersionData['DATA']['v'];
+
 			if ( empty( $strVersion ) )
 				throw new CModelException( '升级失败，参数不正确！' );
 
@@ -110,7 +128,7 @@ class UpgradeController extends BaseController
 				throw new CModelException( '当前版本无需升级！' );
 
 			// execute upgrade
-			$command = "cd ".WEB_ROOT.";wget ".MAIN_DOMAIN."/down/v{$strVersion}.zip;sudo unzip -o v{$strVersion}.zip;sudo rm -rf v{$strVersion}.zip;";
+			$command = "sudo cd ".WEB_ROOT.";sudo wget ".MAIN_DOMAIN."/down/v{$strVersion}.zip;sudo unzip -o v{$strVersion}.zip;sudo rm -rf v{$strVersion}.zip;";
 			exec( $command );
 			
 			$isok = 1;

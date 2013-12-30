@@ -19,6 +19,7 @@ class UtilUrl
 						// upgrade
 						'upgrade'=>'upgrade/index',
 						'checkversion'=>'upgrade/checkversion',
+						'hasnew'=>'upgrade/hasnew',
 						'upgradeversion'=>'upgrade/upgradeversion'
 					);
 

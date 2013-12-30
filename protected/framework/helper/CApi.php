@@ -22,7 +22,7 @@ class CApi
 		$aryReturn = array( 'ISOK'=>0 , 'DATA'=>array() , 'ERROR'=>'' );
 		//补时间戳数据
 		$_aryData['time'] = time();
-		
+
 		//对参数进行签名
 		$sign = self::sign( $_aryData , $_strSignKey );
 		$url = $_strRoute;
@@ -32,7 +32,7 @@ class CApi
 			$aryParams[] = "{$k}=".urlencode($v);
 
 		$aryParams[] = "&sign={$sign}";
-		$url = ( $_boolIsStaticUrl === true ? '?' : '&' ).implode( "&" , $aryParams );
+		$url = $url.( $_boolIsStaticUrl === true ? '?' : '&' ).implode( "&" , $aryParams );
 
 		// 初始化一个 cURL 对象
 		$curl = curl_init();
