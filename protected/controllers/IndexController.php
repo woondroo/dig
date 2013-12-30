@@ -241,7 +241,7 @@ class IndexController extends BaseController
 	/**
 	 * check state
 	 */
-	public function actionCheck()
+	public function actionCheck( $_boolIsNoExist = false )
 	{
 		exec( 'sudo ps x|grep miner' , $output );
 
@@ -298,7 +298,28 @@ class IndexController extends BaseController
 		$aryData['alived'] = $alived;
 		$aryData['died'] = $died;
 		$aryData['super'] = $this->getSuperModelState();
-		echo json_encode( $aryData );exit;
+
+		if ( $_boolIsNoExist === false )
+		{
+			echo json_encode( $aryData );exit;
+		}
+		else 
+			return $aryData;
+	}
+
+	/**
+	 * check run state
+	 */
+	public function actionCheckrun()
+	{
+		// check data
+		$aryData = $this->actionCheck( true );
+		
+		if ( count( $aryData['alived'] ) === 0 )
+			echo $this->actionRestart( true ) === true ? 1 : -1;
+		else
+			echo 0;
+		exit;
 	}
 
 	/**

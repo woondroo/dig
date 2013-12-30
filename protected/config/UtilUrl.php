@@ -9,6 +9,7 @@ class UtilUrl
 						'restart'=>'index/restart',
 						'shutdown'=>'index/shutdown',
 						'check'=>'index/check',
+						'checkrun'=>'index/checkrun',
 						'usbstate'=>'index/usbstate',
 						// usb=/dev/ttyUSB0 | to=btc|ltc|0
 						'usbset'=>'index/usbset',
