@@ -20,7 +20,9 @@ class UtilUrl
 						'upgrade'=>'upgrade/index',
 						'checkversion'=>'upgrade/checkversion',
 						'hasnew'=>'upgrade/hasnew',
-						'upgradeversion'=>'upgrade/upgradeversion'
+						'upgradeversion'=>'upgrade/upgradeversion',
+						// port check
+						'portcheck'=>'port/check'
 					);
 
 	/**

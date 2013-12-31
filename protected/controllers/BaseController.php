@@ -246,7 +246,6 @@ class BaseController extends CController
 		$aryData['ISOK'] = $_isok ? 1 : 0;
 		$aryData['DATA'] = $_aryData;
 		$aryData['MSG'] = $_strMsg;
-		$aryData['ISLOGIN'] = Nbt::app()->user->getUserId() > 0 || $_isNeedLogin === false ? 1 : 0;
 		$aryData['LINK'] = $_aryLink;
 		return CJavascript::jsonEncode($aryData);
 	}
