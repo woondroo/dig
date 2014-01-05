@@ -197,9 +197,9 @@ class IndexController extends BaseController
 			return false;
 
 		if ( $startModel == 'btc' )
-			$command = "sudo nohup /home/soft/cgminer/cgminer -o {$aryData['ad']} -u {$aryData['ac']} -p {$aryData['pw']} -S {$startUsb} >/dev/null 2>&1 &";
+			$command = "sudo nohup /home/wwwroot/dig/soft/cgminer -o {$aryData['ad']} -u {$aryData['ac']} -p {$aryData['pw']} -S {$startUsb} >/dev/null 2>&1 &";
 		else if ( $startModel == 'ltc' )
-			$command = "sudo nohup /home/soft/cpuminer/minerd --freq=".($aryData['su'] == 0 ? '600' : '800')." --gc3355={$startUsb} --url={$aryData['ad']} --userpass={$aryData['ac']}:{$aryData['pw']} -2 >/dev/null 2>&1 &";
+			$command = "sudo nohup /home/wwwroot/dig/soft/minerd --freq=".($aryData['su'] == 0 ? '600' : '900')." --gc3355={$startUsb} --url={$aryData['ad']} --userpass={$aryData['ac']}:{$aryData['pw']} -2 >/dev/null 2>&1 &";
 
 		exec( $command );
 		return true;

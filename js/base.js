@@ -1,12 +1,12 @@
 var actions = {
 	setting : {
-		url_restart			: '/restart',
-		url_restarttarget	: '/restartTar',
-		url_shutdown		: '/shutdown',
-		url_supermodel		: '/supermode',
-		url_usbstate		: '/usbstate',
-		url_usbset			: '/usbset',
-		url_check			: '/check',
+		url_restart			: set_url_restart,
+		url_restarttarget	: set_url_restarttarget,
+		url_shutdown		: set_url_shutdown,
+		url_supermodel		: set_url_supermodel,
+		url_usbstate		: set_url_usbstate,
+		url_usbset			: set_url_usbset,
+		url_check			: set_url_check,
 		runstate			: false
 	},
 	// restart all service
