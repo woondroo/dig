@@ -70,18 +70,65 @@ class PortController extends BaseController
 	/**
 	 * Generate key for machine
 	 */
-	public function actionGeneratekey()
+	public function actionGeneratekey( $_boolIsNoExist = false )
 	{
 		$os = DIRECTORY_SEPARATOR=='\\' ? "windows" : "linux";
 		$mac_addr = new CMac( $os );
 		$ip_addr = new CIp( $os );
 
-		$file = fopen( WEB_ROOT.'/js/showport.js' , 'w' );
-		fwrite($file, 'add_machine(\''.md5($mac_addr->mac_addr).'\',\''.$ip_addr->ip_addr.'\');');
+		if ( file_exists( WEB_ROOT.'/js/RKEY.TXT' ) )
+		{
+			$strRKEY = file_get_contents( WEB_ROOT.'/js/RKEY.TXT' );
+		}
+
+		if ( isset( $strRKEY ) && empty( $strRKEY ) )
+		{
+			$this->generateRKEY();
+			$strRKEY = file_get_contents( WEB_ROOT.'/js/RKEY.TXT' );
+		}
+
+		$key_file = fopen( WEB_ROOT.'/js/showport.js' , 'w' );
+		fwrite($key_file, 'add_machine(\''.md5($mac_addr->mac_addr.'-'.$strRKEY).'\',\''.$ip_addr->ip_addr.'\');');
+		fclose($key_file);
+
+		if ( $_boolIsNoExist === true )
+			return true;
+		else
+		{
+			echo '200';
+			exit();
+		}
+	}
+
+	/**
+	 * Cancel bind
+	 */
+	public function actionCancelbind()
+	{
+		$boolResult = $this->generateRKEY();
+		if ( $boolResult === true )
+			$boolResult = $this->actionGeneratekey( true );
+
+		if ( $boolResult === true )
+			UtilMsg::saveTipToSession( '取消绑定成功，请重新扫描绑定！' );
+		else
+			UtilMsg::saveErrorTipToSession( '取消绑定失败，再试试！' );
+
+		$this->redirect( array( 'index/index' ) );
+	}
+
+	/**
+	 * Generate random key
+	 */
+	public function generateRKEY()
+	{
+		srand((double)microtime()*1000000);
+
+		$file = fopen( WEB_ROOT.'/js/RKEY.TXT' , 'w' );
+		fwrite($file, rand());
 		fclose($file);
 
-		echo '200';
-		exit();
+		return true;
 	}
 
 //end class

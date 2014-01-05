@@ -161,7 +161,8 @@ class IndexController extends BaseController
 			$this->restartByUsb( $usb , $model );
 		}
 
-		sleep( 3 );
+		// if btc machine has restart
+		if ( count( $aryBTCUsb ) > 0 ) sleep( 3 );
 
 		foreach ( $aryLTCUsb as $usb=>$model )
 		{

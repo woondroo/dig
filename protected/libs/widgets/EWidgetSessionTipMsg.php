@@ -7,13 +7,13 @@ class EWidgetSessionTipMsg extends CWidget
 		$msg = UtilMsg::getTipFromSession();
 		if( !empty( $msg ) )
 		{
-			echo "<div class='error errorSuccess'>{$msg}</div>";
+			echo "<div class=\"alert alert-success\">{$msg}</div>";
 		}
 		//error msg
 		$msg = UtilMsg::getErrorTipFromSession();
 		if( !empty( $msg ) )
 		{
-			echo "<div class='error errorError'>{$msg}</div>";
+			echo "<div class=\"alert alert-danger\">{$msg}</div>";
 		}
 		return;
 	}

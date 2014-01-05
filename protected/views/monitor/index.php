@@ -1,4 +1,3 @@
-<div class="container">
   <div class="page-header">
 	<h1>新设备检测</h1>
   </div>

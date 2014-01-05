@@ -1,7 +1,6 @@
 <?php
 $aryStatus = array( 'success'=>'alert-success' , 'warning'=>'alert-warning' , 'error'=>'alert-danger' );
 ?>
-<div class="container">
   <div class="page-header">
     <h1>Setting! 设置中心</h1>
   </div>

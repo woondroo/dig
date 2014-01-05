@@ -9,7 +9,6 @@ class UtilMsg
 	 */
 	public function saveTipToSession( $_strMsg )
 	{
-		$_strMsg = "<img src='../images/arr_wc.png' width='13' height='13' align='absmiddle'>&nbsp;&nbsp;".$_strMsg;
 		Nbt::app()->session->set( '_atip' , $_strMsg );
 	}
 	
@@ -26,7 +25,6 @@ class UtilMsg
 	 */
 	public function saveErrorTipToSession( $_strMsg )
 	{
-		$_strMsg = "<img src='../images/arr_wtg.png' width='13' height='13' align='absmiddle'>&nbsp;&nbsp;".$_strMsg;
 		Nbt::app()->session->set( '_atip_error' , $_strMsg );
 	}
 	

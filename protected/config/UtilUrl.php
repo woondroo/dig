@@ -24,7 +24,8 @@ class UtilUrl
 						// port check
 						'portcheck'=>'port/check',
 						'printsome'=>'port/print',
-						'generatekey'=>'port/generatekey'
+						'generatekey'=>'port/generatekey',
+						'cancelbind'=>'port/cancelbind'
 					);
 
 	/**
